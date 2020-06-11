@@ -17,6 +17,41 @@ a {
 .logo {
   font-size: 16px;
 }
+.link-icons {
+  display: flex;
+  flex-grow: 1;
+  flex-basis: 0;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+}
+.link-icons a {
+  text-decoration: none;
+  color: #0066ff;
+  padding: 0 10px;
+  font-size: 12px;
+}
+.link-icons a:hover {
+  color: #4e5c70;
+}
+.link-icons a i {
+  font-size: 24px;
+}
+.link-icons a span {
+  display: inline-block;
+  text-align: center;
+  background-color: #63748e;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 12px;
+  line-height: 16px;
+  width: 16px;
+  height: 16px;
+  font-weight: bold;
+  position: absolute;
+  top: -10px;
+  right: 0;
+}
 
 /*HEADER--------------------------------- */
 .slide {
@@ -119,10 +154,8 @@ a {
 }
 
 /* sản phẩm */
-.col-2.col-product {
+.col-3.col-product {
   margin-bottom: 9px;
-}
-.col-product a {
 }
 .card-img-top.img-product {
   height: auto;
@@ -179,3 +212,5 @@ a {
   color: rgb(197, 56, 56);
   font-weight: 700;
 }
+
+/* table cart */

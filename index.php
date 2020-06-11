@@ -1,6 +1,8 @@
 <?php
-include 'database/productDB.php.php';
-include 'database/categoryDB.php'
+include_once  'database/productDB.php';
+include_once  'database/brandDB.php';
+include_once  'database/categoryDB.php';
+include_once  'database/cart.php'
 ?>
 
 <title>Điện Máy CDB</title>
@@ -9,12 +11,13 @@ include 'database/categoryDB.php'
 <body>
     <!-- nav bar -->
     <?php include 'views/common/navbar.php' ?>
+
     <!-- vertical slide and banner-->
     <div class="container slide">
         <div class="row">
             <div class="col-2">
                 <div class="list-group">
-                    <?php echo listCategory(); ?>
+                    <!-- <?php echo listCategory(); ?> -->
                 </div>
             </div>
 

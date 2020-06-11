@@ -43,7 +43,6 @@ function showAllCartItems()
     if ($products_in_cart) {
         $findReplace = ['[', ']', '"'];
         $listID = str_replace($findReplace, '', json_encode(array_keys($products_in_cart)));
-
         $query = $conn->query("select * from products where product_id in (" . $listID . ')');
         while ($r = $query->fetch_array()) {
             $itemCart .= '<tr class="tb-cart-body">';

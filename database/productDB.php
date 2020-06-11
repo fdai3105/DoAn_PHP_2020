@@ -12,7 +12,8 @@ function showAllProduct()
     $row =  $result->fetch_array();
     $total_records = $row['total'];
     $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
-    $limit = 4;
+    // change phân trang here
+    $limit = 12;
     $total_page = ceil($total_records / $limit);
     if ($current_page > $total_page) {
         $current_page = $total_page;
@@ -22,7 +23,7 @@ function showAllProduct()
     $start = ($current_page - 1) * $limit;
 
     // hiển thị
-    $query = $conn->query("select * from products limit $start, $limit");
+    $query = $conn->query("select * from products order by products.product_danhgia desc limit $start, $limit");
     $products = '';
     while ($r = $query->fetch_array()) {
         $products .= '<div class="col-3 col-product">';
@@ -102,13 +103,16 @@ function showProduct($id)
     $vietnam_format_number = number_format($r['product_price'], 0, ',', '.');
     $product .= '<h4>' . $vietnam_format_number . 'đ' . '</h4>';
     $product .= '<h5 style="margin: 0">Đặc điểm nổi bật</h5>';
-    $product .= '<ul>
-                <li>Bảo quản thực phẩm không cần rã đông khi sử dụng ngăn cấp đông mềm thế hệ mới Prime Fresh+.</li>
-                <li>Tiết kiệm điện tối đa với bộ 3 công nghệ Inverter, Multi Control và cảm biến Econavi.</li>
-                <li>Ngăn chặn vi khuẩn, mùi hôi khó chịu với công nghệ kháng khuẩn Ag Clean.</li>
-                <li>Hơi lạnh tỏa đều mọi vị trí trong tủ thông qua công nghệ làm lạnh Panorama.</li>
-            </ul>';
 
+    // trim product_tienich by dot
+    $product .= '<ul>';
+    $tienich = explode('.', $r['product_tienich']);
+    foreach (array_slice($tienich, 0, 5) as $tienich) {
+        if (!empty($tienich)) {
+            $product .=  '<li>' . $tienich . '</li>';
+        }
+    }
+    $product .= '</ul>';
     $product .= '<div class="row buy-add">
                 <button type="button" class="btn btn-dark buy">
                     <p style="font-size: 18px; font-weight:700; margin: 0">MUA NGAY</p>Miễn Phí Vận Chuyển
@@ -122,31 +126,104 @@ function showProduct($id)
     return $product;
 }
 
+function showAllProductByCategory($cateName)
+{
+    global $conn;
+    // hiển thị
+    $query =
+        $conn->query("SELECT products.*, categories.category_name
+                    from products, categories
+                    where products.categories_category_id = categories.category_id
+                    having categories.category_name = '$cateName'");
+    $products = '';
+    while ($r = $query->fetch_array()) {
+        $products .= '<div class="col-3 col-product">';
+        $products .= '<a href="sanphamItem.php?id=' . $r['product_id'] . '">';
+        $products .= '<div class="card">';
+        if (empty($r['product_img'])) {
+            $products .= '<img class="card-img-top img-product" src="https://via.placeholder.com/400x400.png?text=dien%20may%20CDB" alt="Card image">';
+        } else {
+            $products .= '<img class="card-img-top img-product" src="' . $r['product_img'] . '" alt="Card image">';
+        }
+        $products .= '<div class="card-body">';
+        $products .= '<p class="card-text">' . getCategoryByProduct($r['product_id']) . '</p>';
+        $products .= '<p class="card-title">' . $r['product_name'] . '</p>';
+        $vietnam_format_number = number_format($r['product_price'], 0, ',', '.');
+        $products .= '<p class="card-text price">' . $vietnam_format_number . 'đ' . '</p>';
+        $products .= '</div>';
+        $products .= '</div>';
+        $products .= '</a>';
+        $products .= '</div>';
+    }
+    return $products;
+}
+
+function showAllProductByBrand($brandName)
+{
+    global $conn;
+    // hiển thị
+    $query =
+        $conn->query("SELECT products.*, brands.brand_name FROM products, brands WHERE 
+            products.brands_brand_id = brands.brand_id HAVING brands.brand_name = '$brandName'");
+    $products = '';
+    while ($r = $query->fetch_array()) {
+        $products .= '<div class="col-3 col-product">';
+        $products .= '<a href="sanphamItem.php?id=' . $r['product_id'] . '">';
+        $products .= '<div class="card">';
+        if (empty($r['product_img'])) {
+            $products .= '<img class="card-img-top img-product" src="https://via.placeholder.com/400x400.png?text=dien%20may%20CDB" alt="Card image">';
+        } else {
+            $products .= '<img class="card-img-top img-product" src="' . $r['product_img'] . '" alt="Card image">';
+        }
+        $products .= '<div class="card-body">';
+        $products .= '<p class="card-text">' . getCategoryByProduct($r['product_id']) . '</p>';
+        $products .= '<p class="card-title">' . $r['product_name'] . '</p>';
+        $vietnam_format_number = number_format($r['product_price'], 0, ',', '.');
+        $products .= '<p class="card-text price">' . $vietnam_format_number . 'đ' . '</p>';
+        $products .= '</div>';
+        $products .= '</div>';
+        $products .= '</a>';
+        $products .= '</div>';
+    }
+    return $products;
+}
+
+function findProducts($proName)
+{
+    global $conn;
+    // hiển thị
+    $query = $conn->query("select * from products where product_name like '%$proName%'");
+    if (empty($query->fetch_array())) {
+        return  'khong tim thay nha';
+    } else {
+        $products = '';
+        while ($r = $query->fetch_array()) {
+            $products .= '<div class="col-3 col-product">';
+            $products .= '<a href="sanphamItem.php?id=' . $r['product_id'] . '">';
+            $products .= '<div class="card">';
+            if (empty($r['product_img'])) {
+                $products .= '<img class="card-img-top img-product" src="https://via.placeholder.com/400x400.png?text=dien%20may%20CDB" alt="Card image">';
+            } else {
+                $products .= '<img class="card-img-top img-product" src="' . $r['product_img'] . '" alt="Card image">';
+            }
+            $products .= '<div class="card-body">';
+            $products .= '<p class="card-text">' . getCategoryByProduct($r['product_id']) . '</p>';
+            $products .= '<p class="card-title">' . $r['product_name'] . '</p>';
+            $vietnam_format_number = number_format($r['product_price'], 0, ',', '.');
+            $products .= '<p class="card-text price">' . $vietnam_format_number . 'đ' . '</p>';
+            $products .= '</div>';
+            $products .= '</div>';
+            $products .= '</a>';
+            $products .= '</div>';
+        }
+        return $products;
+    }
+}
+
+
 function showTop5Products()
 {
     // SELECT * FROM `products` ORDER BY product_danhgia DESC LIMIT 3
 
 
-}
-
-function addProduct(
-    $pName,
-    $pBrandId,
-    $pCategoryId,
-    $pPrice,
-    $pQuantity,
-    $pDanhgia,
-    $pImg,
-    $pBaoHanh,
-    $pNoiSX,
-    $pTienIch,
-    $pCongSuat,
-    $pKichThuoc,
-    $pKhoiLuong,
-    $pTietKiemDien
-) {
-    global $conn;
-    $q = "INSERT INTO `products` (`product_name`, `brands_barnd_id`, `categories_category_id`, `product_price`, `product_quantity`, `product_danhgia`, `product_image`, `product_baohanh`, `product_noisx`, `product_tienich`, `product_congsuat`, `product_kichthuoc`, `product_khoiluong`, `product_tietkiendien`) 
-            VALUES ()";
-    $query = $conn->query($q);
 }

@@ -4,7 +4,7 @@ include_once 'dbConn.php';
 function listCategory()
 {
     global $conn;
-    $query = $conn->query("select * from categories");
+    $query = $conn->query("select * from categories limit 8");
     $list = '';
     while ($row = $query->fetch_array()) {
         $list .= '<a class="dropdown-item" href="danhmuc.php?dm=' . $row['category_name'] . '">' . $row['category_name'] . '</a>';

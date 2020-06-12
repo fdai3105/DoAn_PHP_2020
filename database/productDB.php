@@ -191,12 +191,10 @@ function showAllProductByBrand($brandName)
 function findProducts($proName)
 {
     global $conn;
+    $products = '';
     // hiển thị
     $query = $conn->query("select * from products where product_name like '%$proName%'");
-    if (empty($query->fetch_array())) {
-        return  'khong tim thay nha';
-    } else {
-        $products = '';
+    if ($query->fetch_array()) {
         while ($r = $query->fetch_array()) {
             $products .= '<div class="col-3 col-product">';
             $products .= '<a href="sanphamItem.php?id=' . $r['product_id'] . '">';
@@ -216,14 +214,45 @@ function findProducts($proName)
             $products .= '</a>';
             $products .= '</div>';
         }
-        return $products;
+    } else {
+        $products .= '<div class="col" style="text-align: center;">';
+        $products .= '<img src="images/cant-find.png" width="40%" alt="">';
+        $products .= '<h4 style="color: #343A40;margin-top: 10px;font-family: Arial, Helvetica, sans-serif;">Không thể tìm thấy sản phẩm nào.</h4>';
+        $products .= '<h5 style="color: #343A40;margin-bottom: 150px; font-family: Arial, Helvetica, sans-serif;">Vui lòng thử lại từ khoá khác</h5>';
+        $products .= '</div>';
     }
+    return $products;
 }
 
 
 function showTop5Products()
 {
-    // SELECT * FROM `products` ORDER BY product_danhgia DESC LIMIT 3
-
+    global $conn;
+    $query = $conn->query("SELECT * FROM `products` ORDER BY product_danhgia DESC LIMIT 5");
+    $products = '';
+    $products .= '<div class="container product-hot">';
+    $products .= '<div class="row product-hot-items">';
+    while ($r = $query->fetch_array()) {
+        $products .= '<div class="col">';
+        $products .= '<a href="sanphamItem.php?id=' . $r['product_id'] . '">';
+        $products .= '<div class="card">';
+        if (empty($r['product_img'])) {
+            $products .= '<img class="card-img-top img-product" src="https://via.placeholder.com/400x400.png?text=dien%20may%20CDB" alt="Card image">';
+        } else {
+            $products .= '<img class="card-img-top img-product" src="' . $r['product_img'] . '" alt="Card image">';
+        }
+        $products .= '<div class="card-body">';
+        $products .= '<p class="card-text">' . getCategoryByProduct($r['product_id']) . '</p>';
+        $products .= '<p class="card-title">' . $r['product_name'] . '</p>';
+        $vietnam_format_number = number_format($r['product_price'], 0, ',', '.');
+        $products .= '<p class="card-text price">' . $vietnam_format_number . 'đ' . '</p>';
+        $products .= '</div>';
+        $products .= '</div>';
+        $products .= '</a>';
+        $products .= '</div>';
+    }
+    $products .= '</div>';
+    $products .= '</div>';
+    return $products;
 
 }

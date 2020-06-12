@@ -13,25 +13,12 @@ include_once  'database/categoryDB.php';
 
     <!-- body -->
     <div class="container" style="margin-top: 50px;">
-        <table class="table table-hover table-cart">
-            <thead>
-                <tr>
-                    <th scope="col" colspan="2">Product</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Total</th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php echo showAllCartItems() ?>
-            </tbody>
-        </table>
+        <?php echo showAllCartItems() ?>
     </div>
 
-    <form method="post">
-        <button type="submit" name="clearAllCart">Xoá sạch giỏ hàng</button>
-    </form>
+    <!-- <form method="post">
+        <button class="btn btn-danger" type="submit" name="clearAllCart">Xoá sạch giỏ hàng</button>
+    </form> -->
 
     <!-- footer -->
     <?php include 'views/common/footer.php' ?>

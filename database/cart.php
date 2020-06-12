@@ -44,6 +44,18 @@ function showAllCartItems()
         $findReplace = ['[', ']', '"'];
         $listID = str_replace($findReplace, '', json_encode(array_keys($products_in_cart)));
         $query = $conn->query("select * from products where product_id in (" . $listID . ')');
+
+        $itemCart .= '<table class="table table-hover table-cart">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2">Product</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>';
         while ($r = $query->fetch_array()) {
             $itemCart .= '<tr class="tb-cart-body">';
             $itemCart .= '<td style="width: 10px !important;"><img width="80px" src="' . $r['product_img'] . '" alt=""></td>';
@@ -68,6 +80,13 @@ function showAllCartItems()
         $itemCart .= '<tr class="tb-cart-body">';
         $itemCart .= '<td colspan="6" class="total">Total: ' . number_format($totalBilled, 0, '.', ',') . '₫</td>';
         $itemCart .= '</tr>';
-        return $itemCart;
+        $itemCart .= '</tbody>
+        </table>';
+    } else {
+        $itemCart .= '<div style="text-align: center;">';
+        $itemCart .= '<img src="images/empty-cart.png" width="40%" alt="">';
+        $itemCart .= '<h4 style="color: #343A40;margin-top: 10px; margin-bottom: 150px; font-family: Arial, Helvetica, sans-serif;">Không có sản phẩm nào trong giỏ hàng</h4>';
+        $itemCart .= '</div>';
     }
+    return $itemCart;
 }

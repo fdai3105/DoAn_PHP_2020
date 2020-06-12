@@ -10,10 +10,8 @@ include_once  'database/cart.php'?>
 
     <div class="container product-item">
         <div class="row">
-
             <?php $id = $_GET['id'];
             echo showProduct($id);
-            addProduct("test",1,1,"","","","","","","","","","","");
             ?>
 
             <div style="width: 70%; margin: 0 auto; margin-top:18px">
@@ -22,7 +20,6 @@ include_once  'database/cart.php'?>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 
     <?php include 'views/common/footer.php' ?>

@@ -12,7 +12,7 @@ include_once  'database/categoryDB.php';
     <?php include 'views/common/navbar.php' ?>
 
     <!-- body -->
-    <div class="container" style="margin-top: 50px;">
+    <div class="container" style="margin-top: 50px;margin-bottom: 100px">
         <?php echo showAllCartItems() ?>
     </div>
 

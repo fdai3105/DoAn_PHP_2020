@@ -14,7 +14,7 @@ include_once  'database/cart.php'
 
     <!-- vertical slide and banner-->
     <div class="container slide">
-        <div class="col">
+        <div class="col" style="padding:0">
             <div id="demo" class="carousel slide" data-ride="carousel">
                 <!-- Indicators -->
                 <ul class="carousel-indicators">

@@ -6,7 +6,6 @@ include_once  'database/categoryDB.php';
 function showAllProduct()
 {
     global $conn;
-
     // phân trang
     $result = mysqli_query($conn, 'select count(product_id) as total from products');
     $row =  $result->fetch_array();
@@ -123,6 +122,7 @@ function showProduct($id)
             </div>';
     $product .= '</form>';
     $product .= '</div>';
+    $product .= '</div>';
     return $product;
 }
 
@@ -161,10 +161,28 @@ function showAllProductByCategory($cateName)
 function showAllProductByBrand($brandName)
 {
     global $conn;
+    // phân trang
+    $result = mysqli_query($conn, "SELECT count(*) as total 
+                        FROM products,brands 
+                        WHERE products.brands_brand_id = brands.brand_id 
+                        and brands.brand_name = '$brandName'");
+    $row =  $result->fetch_array();
+    $total_records = $row['total'];
+    $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
+    // change phân trang here
+    $limit = 8;
+    $total_page = ceil($total_records / $limit);
+    if ($current_page > $total_page) {
+        $current_page = $total_page;
+    } else if ($current_page < 1) {
+        $current_page = 1;
+    }
+    $start = ($current_page - 1) * $limit;
+
     // hiển thị
     $query =
         $conn->query("SELECT products.*, brands.brand_name FROM products, brands WHERE 
-            products.brands_brand_id = brands.brand_id HAVING brands.brand_name = '$brandName'");
+            products.brands_brand_id = brands.brand_id HAVING brands.brand_name = '$brandName' limit $start, $limit");
     $products = '';
     while ($r = $query->fetch_array()) {
         $products .= '<div class="col-3 col-product">';
@@ -185,15 +203,36 @@ function showAllProductByBrand($brandName)
         $products .= '</a>';
         $products .= '</div>';
     }
+    $products .= '<div class="container">';
+    $products .= '<ul class="pagination pg-dark justify-content-end">';
+    if ($current_page == 1) {
+        $products .= '<li class="page-item disabled"><a class="page-link" href="">Previous</a></li>';
+    } else {
+        $products .= '<li class="page-item"><a class="page-link" href="thuonghieu.php?brand=thuonghieu.php?brand=' . $brandName . '&page=' . ($current_page - 1) . '">Previous</a></li>';
+    }
+    for ($i = 1; $i <= $total_page; $i++) {
+        if ($i == $current_page) {
+            $products .=  '<li class="page-item active"><a class="page-link" href="#">' . $i . '</a></li>';
+        } else {
+            $products .= '<li class="page-item"><a class="page-link" href="thuonghieu.php?brand=' . $brandName . '&page=' . $i . '">' . $i . '</a></li>';
+        }
+    }
+    if ($current_page == $total_page) {
+        $products .= '<li class="page-item disabled"><a class="page-link" href="">Next</a></li>';
+    } else {
+        $products .= '<li class="page-item"><a class="page-link" href="thuonghieu.php?brand=' . $brandName . '&page=' . ($current_page + 1) . '">Next</a></li>';
+    }
+    $products .= '</ul>';
+    $products .= '</div>';
     return $products;
 }
 
-function findProducts($proName)
+function findProducts($proName, $orderBy)
 {
     global $conn;
     $products = '';
     // hiển thị
-    $query = $conn->query("select * from products where product_name like '%$proName%'");
+    $query = $conn->query("select * from products where product_name like '%$proName%' " . $orderBy);
     if ($query->fetch_array()) {
         while ($r = $query->fetch_array()) {
             $products .= '<div class="col-3 col-product">';
@@ -243,7 +282,7 @@ function showTop5Products()
         }
         $products .= '<div class="card-body">';
         $products .= '<p class="card-text">' . getCategoryByProduct($r['product_id']) . '</p>';
-        $products .= '<p class="card-title">' . $r['product_name'] . '</p>';
+        $products .= '<p class="card-title">' . mb_strimwidth($r['product_name'], 0, 35, '...') . '</p>';
         $vietnam_format_number = number_format($r['product_price'], 0, ',', '.');
         $products .= '<p class="card-text price">' . $vietnam_format_number . 'đ' . '</p>';
         $products .= '</div>';
@@ -254,5 +293,4 @@ function showTop5Products()
     $products .= '</div>';
     $products .= '</div>';
     return $products;
-
 }

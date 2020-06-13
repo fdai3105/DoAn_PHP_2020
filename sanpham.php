@@ -9,7 +9,7 @@ include_once  'database/cart.php' ?>
 <body>
     <?php include 'views/common/navbar.php' ?>
 
-    <div class="container">
+    <div class="container" style="margin-top:25px">
         <div class="row">
             <?php echo showAllProduct() ?>
         </div>

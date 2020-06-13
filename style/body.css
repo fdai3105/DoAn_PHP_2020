@@ -6,6 +6,7 @@ a {
 }
 
 /*  */
+
 .col-2 {
   padding-right: 0px;
 }
@@ -213,3 +214,6 @@ a {
 }
 
 /* table cart */
+td {
+  vertical-align: middle !important;
+}

@@ -3,6 +3,7 @@ include_once  'dbConn.php';
 include_once  'database/brandDB.php';
 include_once  'database/categoryDB.php';
 
+
 function showAllProduct()
 {
     global $conn;
@@ -113,13 +114,10 @@ function showProduct($id)
     }
     $product .= '</ul>';
     $product .= '<div class="row buy-add">
-                <button type="button" class="btn btn-dark buy">
-                    <p style="font-size: 18px; font-weight:700; margin: 0">MUA NGAY</p>Miễn Phí Vận Chuyển
+                <button type="submit" class="btn btn-dark add-cart ">
+                <p style="font-size: 18px; font-weight:700; margin: 0">THÊM VÀO GIỎ HÀNG</p>
                 </button>
-                <button type="submit" class="btn btn-dark add-cart">
-                    <p style="font-size: 18px; font-weight:700; margin: 0">THÊM VÀO GIỎ HÀNG</p>
-                </button>
-            </div>';
+                </div>';
     $product .= '</form>';
     $product .= '</div>';
     $product .= '</div>';
@@ -233,7 +231,24 @@ function findProducts($proName, $orderBy)
     $products = '';
     // hiển thị
     $query = $conn->query("select * from products where product_name like '%$proName%' " . $orderBy);
-    if ($query->fetch_array()) {
+    if (mysqli_num_rows($query)>0) {
+        #region sort by price
+        $products .= '<div class="col-lg-12">';
+        $products .= '<div class="row" style="justify-content: flex-end;">';
+        $products .= '<form class="form-inline" method="get" name="priceSort">';
+        $products .= '<input name="proName" type="hidden" value="' . $_GET['proName'] . '">';
+        $products .= '<div class="form-group mx-3">';
+        $products .= '<select class="form-control" id="priceSort" name="priceSort">';
+        $products .= '<option value="" disabled selected hidden>Sắp xếp theo giá</option>';
+        $products .= "<option " . ((isset($_GET['priceSort']) && $_GET['priceSort'] == 'PriceAsc') ? 'selected ' : '')  . "value='PriceAsc'>Từ thấp đến cao</option>";
+        $products .= "<option " . ((isset($_GET['priceSort']) && $_GET['priceSort'] == 'PriceDesc') ? 'selected ' : '') . "value='PriceDesc'>Từ cao đến thấp</option>";
+        $products .= '</select>';
+        $products .= '</div>';
+        $products .= '<button class="btn btn-info mx-3" type="submit" value="Sort">Sắp xếp</button>';
+        $products .= '</form>';
+        $products .= '</div>';
+        $products .= '</div>';
+        #endregion
         while ($r = $query->fetch_array()) {
             $products .= '<div class="col-3 col-product">';
             $products .= '<a href="sanphamItem.php?id=' . $r['product_id'] . '">';
@@ -254,11 +269,13 @@ function findProducts($proName, $orderBy)
             $products .= '</div>';
         }
     } else {
+        #region display if search empty
         $products .= '<div class="col" style="text-align: center;">';
         $products .= '<img src="images/cant-find.png" width="40%" alt="">';
         $products .= '<h4 style="color: #343A40;margin-top: 10px;font-family: Arial, Helvetica, sans-serif;">Không thể tìm thấy sản phẩm nào.</h4>';
         $products .= '<h5 style="color: #343A40;margin-bottom: 150px; font-family: Arial, Helvetica, sans-serif;">Vui lòng thử lại từ khoá khác</h5>';
         $products .= '</div>';
+        #endregion
     }
     return $products;
 }

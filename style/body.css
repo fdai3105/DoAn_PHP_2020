@@ -192,18 +192,11 @@ a {
   font-family: Arial;
   font-weight: 700;
 }
-.row.buy-add {
-  display: flex;
-  justify-content: space-evenly;
-}
-.buy-add-button {
+.buy-add button {
   margin: 0 auto;
 }
-.btn.buy {
-  width: 45%;
-}
 .btn.add-cart {
-  width: 45%;
+  width: 70%;
 }
 .bold {
   color: white;
